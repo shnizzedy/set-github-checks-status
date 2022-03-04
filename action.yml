@@ -1,0 +1,28 @@
+name: 'Set GitHub Checks status'
+description: Set the status of a GitHub Checks check
+inputs:
+  name:
+    description: The name of the check. For example, "code-coverage". 
+    required: true
+  sha:
+    description: The SHA of the commit.
+    required: true
+  status:
+    description: The current status. Can be one of `in_progress`, `action_required`, `cancelled`, `failure`, `neutral`, `success`, `skipped`, `stale`, or `timed_out`
+    required: true
+  token:
+    description: A personal access token with `checks:write` permission.
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        if [[ ${{ inputs.status }} == 'in_progress' ]]
+        then
+          echo "$ACTIONS_WORKFLOW_TOKEN" | gh auth login --with-token && gh api repos/{owner}/{repo}/check-runs {"name":"${{ inputs.name }}","head_sha":"${{ inputs.sha }}","details_url":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID","status":"${{ inputs.status }}"}
+        else
+          echo "$ACTIONS_WORKFLOW_TOKEN" | gh auth login --with-token && gh api repos/{owner}/{repo}/check-runs {"name":"${{ inputs.name }}","head_sha":"${{ inputs.sha }}","details_url":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID","conclusion":"${{ inputs.status }}"}
+      env:
+        ACTIONS_WORKFLOW_TOKEN: ${{ inputs.token }}
