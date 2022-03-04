@@ -24,5 +24,6 @@ runs:
           echo "$ACTIONS_WORKFLOW_TOKEN" | gh auth login --with-token && gh api repos/{owner}/{repo}/check-runs {"name":"${{ inputs.name }}","head_sha":"${{ inputs.sha }}","details_url":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID","status":"${{ inputs.status }}"}
         else
           echo "$ACTIONS_WORKFLOW_TOKEN" | gh auth login --with-token && gh api repos/{owner}/{repo}/check-runs {"name":"${{ inputs.name }}","head_sha":"${{ inputs.sha }}","details_url":"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID","conclusion":"${{ inputs.status }}"}
+        fi
       env:
         ACTIONS_WORKFLOW_TOKEN: ${{ inputs.token }}
